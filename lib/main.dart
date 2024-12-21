@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
-import 'widgets/students_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'screens/tabs_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: UniversityApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class UniversityApp extends StatelessWidget {
+  const UniversityApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Студенти',
+      title: 'Університет',
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: Colors.lightGreen.shade50,
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey.shade100,
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(fontWeight: FontWeight.bold),
+          titleSmall: TextStyle(fontSize: 16),
+        ),
       ),
-      home: StudentsScreen(),
+      home: const TabsScreen(),
     );
   }
 }

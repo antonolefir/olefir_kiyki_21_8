@@ -3,57 +3,55 @@ import '../models/student.dart';
 
 class StudentItem extends StatelessWidget {
   final Student student;
+  final VoidCallback onEdit;
 
-  const StudentItem({Key? key, required this.student}) : super(key: key);
+  const StudentItem({
+    super.key,
+    required this.student,
+    required this.onEdit,
+  });
+
+  Color _getBackgroundColorByGender(Gender gender) {
+    return gender == Gender.male ? Colors.blue.shade50 : Colors.pink.shade50;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = student.gender == Gender.male
-        ? Colors.teal.shade50
-        : Colors.orange.shade50;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: student.gender == Gender.male ? Colors.teal : Colors.orange,
-            child: Icon(
-              departmentIcons[student.department],
-              size: 28,
-              color: Colors.white,
-            ),
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      elevation: 4,
+      child: ListTile(
+        leading: Icon(
+          student.department.icon,
+          color: student.gender == Gender.male ? Colors.blue : Colors.pink,
+          size: 30,
+        ),
+        title: Text(
+          '${student.firstName} ${student.lastName}',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${student.firstName} ${student.lastName}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Оцінка: ${student.grade}',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Department: ${student.department.name}',
+              style: const TextStyle(fontSize: 14),
             ),
-          ),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              'Grade: ${student.grade}',
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ],
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.edit_square),
+          color: Colors.green,
+          onPressed: onEdit,
+        ),
       ),
     );
   }
