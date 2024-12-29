@@ -11,6 +11,26 @@ class StudentsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final students = ref.watch(studentsProvider);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (students.exc != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              students.exc!,
+              style: const TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
+
+    if (students.load) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Список студентів'),
@@ -21,17 +41,13 @@ class StudentsScreen extends ConsumerWidget {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                builder: (_) => StudentForm(
-                  onSave: (newStudent) {
-                    ref.read(studentsProvider.notifier).addStudent(newStudent);
-                  },
-                ),
+                builder: (_) => const StudentForm(),
               );
             },
           ),
         ],
       ),
-      body: students.isEmpty
+      body: students.docs.isEmpty
           ? const Center(
               child: Text(
                 'Немає студентів',
@@ -39,9 +55,9 @@ class StudentsScreen extends ConsumerWidget {
               ),
             )
           : ListView.builder(
-              itemCount: students.length,
+              itemCount: students.docs.length,
               itemBuilder: (context, index) {
-                final student = students[index];
+                final student = students.docs[index];
 
                 return Dismissible(
                   key: ValueKey(student.id),
@@ -82,7 +98,11 @@ class StudentsScreen extends ConsumerWidget {
                           },
                         ),
                       ),
-                    );
+                    ).closed.then((value) {
+                      if (value != SnackBarClosedReason.action) {
+                        container.read(studentsProvider.notifier).removeForewer();
+                      }
+                    });
                   },
                   child: StudentItem(
                     student: student,
@@ -90,14 +110,7 @@ class StudentsScreen extends ConsumerWidget {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        builder: (_) => StudentForm(
-                          student: student,
-                          onSave: (updatedStudent) {
-                            ref
-                                .read(studentsProvider.notifier)
-                                .updateStudent(index, updatedStudent);
-                          },
-                        ),
+                        builder: (_) => StudentForm(studentIndex: index,)
                       );
                     },
                   ),

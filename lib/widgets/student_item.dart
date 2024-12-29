@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:olefir_kiyki_21_8/models/department.dart';
+import 'package:olefir_kiyki_21_8/utils.dart';
 import '../models/student.dart';
 
 class StudentItem extends StatelessWidget {
@@ -12,18 +14,20 @@ class StudentItem extends StatelessWidget {
   });
 
   Color _getBackgroundColorByGender(Gender gender) {
-    return gender == Gender.male ? Colors.blue.shade50 : Colors.pink.shade50;
+    return gender == Gender.male ? Colors.blue : Colors.pink;
   }
 
   @override
   Widget build(BuildContext context) {
+    Department currentDepartment = getDepartmentById(student.departmentId);
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       elevation: 4,
       child: ListTile(
         leading: Icon(
-          student.department.icon,
-          color: student.gender == Gender.male ? Colors.blue : Colors.pink,
+          currentDepartment.icon,
+          color: _getBackgroundColorByGender(student.gender),
           size: 30,
         ),
         title: Text(
@@ -37,7 +41,7 @@ class StudentItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Department: ${student.department.name}',
+              'Department: ${currentDepartment.name}',
               style: const TextStyle(fontSize: 14),
             ),
             const SizedBox(height: 4),
